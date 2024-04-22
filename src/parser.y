@@ -2,6 +2,7 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <math.h>
+    #include <string.h>
     int yylex();
     void yyerror(const char *s);
 
@@ -17,9 +18,11 @@
     double number;
 }
 
+// %token means terminal
 %token <number> NUMBER
-%token ADD SUBTRACT MULTIPLY DIVIDE POWER ANS FACTORIAL SIN COS TAN LOG PI E
+%token ADD SUBTRACT MULTIPLY DIVIDE POWER ANS FACTORIAL SIN COS TAN LOG PI E QUIT
 
+// %type means non-terminal
 %type <number> exp
 
 %left ADD SUBTRACT
@@ -32,8 +35,10 @@
 %%
 
 input: /* empty string */
-    | input exp '\n' { printf("%lf\n", $2); previous_result = $2;}
-    | input exp { printf("%lf\n", $2); previous_result = $2;}
+    /* | exp '\n' { printf("%lf\n", $1); previous_result = $1;} */
+    /* | input exp { printf("%lf\n", $2); previous_result = $2; return 0; } */
+    | input exp { printf("%lf\n", $2); previous_result = $2; return 0; }
+    | QUIT { exit(0); }
     ;
 
 exp: NUMBER { $$ = $1; }
@@ -62,7 +67,20 @@ void yyerror(const char *s) {
     exit(1);
 }
 
-int main() {
-    yyparse();
+int main(int argc, char **argv) {
+    if (argc > 1 && (strcmp(argv[1], "-i") == 0)) {
+        yyparse();
+        return 0;
+    }
+
+    printf("Welcome to my REPL. Type 'quit' to exit.\n");
+    while (1) {
+        printf("> ");
+        fflush(stdout);  // Make sure the prompt is displayed
+        if (yyparse() != 0) {
+            // yyparse returns non-zero on error
+            break;
+        }
+    }
     return 0;
 }

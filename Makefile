@@ -28,11 +28,15 @@ $(OUTPUT): $(BISON_OUTPUT_C) $(FLEX_OUTPUT)
 
 # Run the program with an input file
 run: $(OUTPUT)
-	@./$< < $(filter-out $@,$(MAKECMDGOALS))
+	@./$< -i < $(filter-out $@,$(MAKECMDGOALS))
+
+# Run the REPL
+repl: $(OUTPUT)
+	@./$<
 
 # Clean target
 clean:
 	@rm -f -r target
 
 # Phony targets
-.PHONY: all run clean
+.PHONY: all run clean repl

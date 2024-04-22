@@ -8,7 +8,7 @@
 %%
 
 [0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)? { yylval.number = atof(yytext); return NUMBER; }
-[ \t\n]                             { /* ignore whitespace */ }
+[ \t]                             { /* ignore whitespace */ }
 "+"                                 { return ADD; }
 "-"                                 { return SUBTRACT; }
 "*"                                 { return MULTIPLY; }
@@ -22,6 +22,8 @@
 "log"                               { return LOG; }
 "pi"                                { return PI; }
 "e"                                 { return E; }
+\n                                  { return 0; }
+"quit"                              { return QUIT; }
 .                                   { return yytext[0]; }
 
 %%
