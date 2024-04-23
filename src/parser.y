@@ -2,7 +2,6 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <math.h>
-    #include <string.h>
     int yylex();
     void yyerror(const char *s);
 
@@ -35,8 +34,6 @@
 %%
 
 input: /* empty string */
-    /* | exp '\n' { printf("%lf\n", $1); previous_result = $1;} */
-    /* | input exp { printf("%lf\n", $2); previous_result = $2; return 0; } */
     | input exp { printf("%lf\n", $2); previous_result = $2; return 0; }
     | QUIT { exit(0); }
     ;
@@ -65,22 +62,4 @@ exp: NUMBER { $$ = $1; }
 void yyerror(const char *s) {
     fprintf(stderr, "Error [Line: %d]: %s\n", yylineno, s);
     exit(1);
-}
-
-int main(int argc, char **argv) {
-    if (argc > 1 && (strcmp(argv[1], "-i") == 0)) {
-        yyparse();
-        return 0;
-    }
-
-    printf("Welcome to my REPL. Type 'quit' to exit.\n");
-    while (1) {
-        printf("> ");
-        fflush(stdout);  // Make sure the prompt is displayed
-        if (yyparse() != 0) {
-            // yyparse returns non-zero on error
-            break;
-        }
-    }
-    return 0;
 }
