@@ -4,12 +4,11 @@
 #include "../target/parser.tab.h"
 
 int main() {
+    srand(time(NULL));
     std::cout << "Welcome to my REPL. Type 'quit' to exit." << std::endl;
     while (1) {
         std::cout << "> " << std::flush;
-        if (yyparse() != 0) {
-            break;
-        }
+        yyparse();
     }
     return 0;
 }
