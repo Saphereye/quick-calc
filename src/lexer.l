@@ -19,6 +19,8 @@
 "!"                                 { return FACTORIAL; }
 "pi"                                { return PI; }
 "e"                                 { return E; }
+[Cc]                                { return COMBINATION; }
+[Pp]                                { return PERMUTATION; }
 \n                                  { return 0; }
 "quit"                              { return QUIT; }
 [a-z]+                              { yylval.str = new std::string(yytext); return FUNC; }

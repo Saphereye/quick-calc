@@ -1,6 +1,6 @@
 %code requires {
-    #include <string>
-    #include <vector>
+    #include <string> // Need to add string as we are using that in %union
+    #include <vector> // Same reason as string
 }
 
 %{
@@ -33,7 +33,7 @@
         {"floor", [](std::vector<double> args) { return floor(args[0]); }},
         {"ceil", [](std::vector<double> args) { return ceil(args[0]); }},
         {"round", [](std::vector<double> args) { return round(args[0]); }},
-        {"truncate", [](std::vector<double> args) { return trunc(args[0]); }},
+        {"trunc", [](std::vector<double> args) { return trunc(args[0]); }},
         {"ln", [](std::vector<double> args) { return log(args[0]); }}, // natural log
         {"log", [](std::vector<double> args) { return log(args[0]) / log(args[1]); }}, // log(x, base)
         {"log2", [](std::vector<double> args) { return log2(args[0]); }},
@@ -50,7 +50,7 @@
         {"hypot", [](std::vector<double> args) { return hypot(args[0], args[1]); }},
         {"atan2", [](std::vector<double> args) { return atan2(args[0], args[1]); }},
         {"gcd", [](std::vector<double> args) { return args.size() == 2 ? std::__gcd((long long int)args[0], (long long int)args[1]) : 0; }},
-        {"fact", [](std::vector<double> args) { double result = 1; for (double i = 1; i <= args[0]; i++) result *= i; return result; }},
+        {"fact", [](std::vector<double> args) { return tgamma(args[0] + 1);}},
         {"perm", [](std::vector<double> args) { return args.size() == 2 ? tgamma(args[0] + 1) / tgamma(args[0] - args[1] + 1) : 0; }},
         {"comb", [](std::vector<double> args) { return args.size() == 2 ? tgamma(args[0] + 1) / (tgamma(args[1] + 1) * tgamma(args[0] - args[1] + 1)) : 0; }},
         {"rand", [](std::vector<double> args) { return args.empty() ? static_cast<double>(rand()) / RAND_MAX : args.size() == 2 ? args[0] + (args[1] - args[0]) * static_cast<double>(rand()) / RAND_MAX : static_cast<double>(rand()) / RAND_MAX; }},
@@ -67,7 +67,7 @@
 }
 
 %token <number> NUMBER
-%token ADD SUBTRACT MULTIPLY DIVIDE POWER FACTORIAL PI E QUIT MOD
+%token ADD SUBTRACT MULTIPLY DIVIDE POWER FACTORIAL PI E QUIT MOD COMBINATION PERMUTATION
 %token <ans_count> ANS
 %token <str> FUNC
 
@@ -99,10 +99,10 @@ exp: NUMBER { $$ = $1; }
     | exp POWER exp { $$ = pow($1, $3); }
     | exp MULTIPLY exp { $$ = $1 * $3; }
     | exp DIVIDE exp { if ($3 == 0.0) yyerror("divide by zero"); else $$ = $1 / $3; }
-    | exp FACTORIAL { double result = 1; for (double i = 1; i <= $1; i++) result *= i; $$ = result; }
+    | exp FACTORIAL { $$ = tgamma($1 + 1); }
     | exp MOD exp { $$ = fmod($1, $3); }
-    | exp 'C' exp { $$ = tgamma($1 + 1) / (tgamma($3 + 1) * tgamma($1 - $3 + 1)); }
-    | exp 'P' exp { $$ = tgamma($1 + 1) / tgamma($1 - $3 + 1); }
+    | exp COMBINATION exp { $$ = tgamma($1 + 1) / (tgamma($3 + 1) * tgamma($1 - $3 + 1)); }
+    | exp PERMUTATION exp { $$ = tgamma($1 + 1) / tgamma($1 - $3 + 1); }
     | '(' exp ')' { $$ = $2; }
     | '|' exp '|' { $$ = fabs($2); }
     ;
