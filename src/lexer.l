@@ -14,7 +14,7 @@
 "*"                                 { return MULTIPLY; }
 "/"                                 { return DIVIDE; }
 "**"                                { return POWER; }
-"_"                                 { return ANS; }
+"_"+                                { yylval.ans_count = strlen(yytext); return ANS; }
 "!"                                 { return FACTORIAL; }
 "sin"                               { return SIN; } // Takes radians as input
 "cos"                               { return COS; } // Takes radians as input

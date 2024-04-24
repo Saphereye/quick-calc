@@ -1,25 +1,27 @@
 %{
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <math.h>
+    #include <iostream>
+    #include <cstdlib>
+    #include <cmath>
+    #include <vector>
     int yylex();
     void yyerror(const char *s);
 
-    // Needed to access yylineno from lexer.l
-    extern int yylineno;
+    extern int yylineno; // Needed to access yylineno from lexer.l
 
-    double previous_result = 0;
+    std::vector<double> previous_results;
 %}
 
 %locations
 
 %union {
     double number;
+    unsigned int ans_count;
 }
 
 // %token means terminal
 %token <number> NUMBER
-%token ADD SUBTRACT MULTIPLY DIVIDE POWER ANS FACTORIAL SIN COS TAN LOG PI E QUIT
+%token ADD SUBTRACT MULTIPLY DIVIDE POWER FACTORIAL SIN COS TAN LOG PI E QUIT
+%token <ans_count> ANS
 
 // %type means non-terminal
 %type <number> exp
@@ -34,14 +36,14 @@
 %%
 
 input: /* empty string */
-    | input exp { printf("%lf\n", $2); previous_result = $2; return 0; }
+    | input exp { printf("%lf\n", $2); previous_results.push_back($2); return 0; }
     | QUIT { exit(0); }
     ;
 
 exp: NUMBER { $$ = $1; }
     | PI { $$ = M_PI; }
     | E { $$ = M_E; }
-    | ANS { $$ = previous_result; }
+    | ANS { if ($1 > previous_results.size()) yyerror("not enough previous results"); else $$ = previous_results[previous_results.size() - $1]; }
     | SIN exp { $$ = sin($2); }
     | COS exp { $$ = cos($2); }
     | TAN exp { $$ = tan($2); }
@@ -60,6 +62,6 @@ exp: NUMBER { $$ = $1; }
 %%
 
 void yyerror(const char *s) {
-    fprintf(stderr, "Error [Line: %d]: %s\n", yylineno, s);
+    std::cerr << "Error [Line: " << yylineno << "]: " << s << std::endl;
     exit(1);
 }
