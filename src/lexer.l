@@ -14,16 +14,14 @@
 "*"                                 { return MULTIPLY; }
 "/"                                 { return DIVIDE; }
 "**"                                { return POWER; }
+"%"                                 { return MOD; }
 "_"+                                { yylval.ans_count = strlen(yytext); return ANS; }
 "!"                                 { return FACTORIAL; }
-"sin"                               { return SIN; } // Takes radians as input
-"cos"                               { return COS; } // Takes radians as input
-"tan"                               { return TAN; } // Takes radians as input
-"log"                               { return LOG; }
 "pi"                                { return PI; }
 "e"                                 { return E; }
 \n                                  { return 0; }
 "quit"                              { return QUIT; }
+[a-z]+                              { yylval.str = new std::string(yytext); return FUNC; }
 .                                   { return yytext[0]; }
 
 %%
