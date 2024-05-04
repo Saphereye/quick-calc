@@ -7,12 +7,17 @@
     #include <iostream>
     #include <cstdlib>
     #include <cmath>
+    #include <cstring>
     #include <map>
     #include <functional>
     
     int yylex();
     void yyerror(const char *s);
+
     extern int yylineno; // Needed to access yylineno from lexer.l
+    extern size_t yycolumn;
+    extern char* yytext;
+
     std::vector<double> previous_results;
     std::map<std::string, std::function<double(std::vector<double>)>> functions = {
         {"sin", [](std::vector<double> args) { return sin(args[0]); }},
@@ -114,5 +119,5 @@ exp_list:
     ;
 %%
 void yyerror(const char *s) {
-    std::cerr << "Error [Line: " << yylineno << "]: " << s << std::endl;
+    fprintf(stderr, "Error [Line: %d Column: %zu]: %s\n", yylineno, yycolumn - strlen(yytext), s);
 }
