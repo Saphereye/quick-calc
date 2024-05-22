@@ -80,3 +80,4 @@ A terminal-based calculator program was made using [flex](https://github.com/wes
     Error [Line: 2 Column: 7]: syntax error, unexpected ','
     > sin(cos(sin(1) +))
     Error [Line: 3 Column: 17]: syntax error, unexpected ')'
+    ```

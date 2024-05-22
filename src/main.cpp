@@ -1,3 +1,9 @@
+/**
+ * @file main.cpp
+ * @brief Main entry point of program
+ * 
+ */
+
 #include <iostream>
 #include <string>
 

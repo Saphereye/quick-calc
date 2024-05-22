@@ -1,3 +1,6 @@
+/* $Id$ -*- mode: c++ -*- */
+/** \file parser.y Define the example Bison lexical parser */
+
 %code requires {
     #include <string> // Need to add string as we are using that in %union
     #include <vector> // Same reason as string

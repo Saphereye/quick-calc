@@ -1,3 +1,6 @@
+/* $Id$ -*- mode: c++ -*- */
+/** \file lexer.l Define the example Flex lexical scanner */
+
 %{
     #include "parser.tab.h"
     #include <stdlib.h>
