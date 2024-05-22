@@ -10,6 +10,7 @@
     #include <cstring>
     #include <map>
     #include <functional>
+    #include <algorithm>
     
     int yylex();
     void yyerror(const char *s);
@@ -81,7 +82,7 @@
 
 %left ADD SUBTRACT
 %left MULTIPLY DIVIDE // Has higher precedence than ADD and SUBTRACT
-%right POWER // Has higher precedence than MULTIPLY and DIVIDE
+%left POWER // Has higher precedence than MULTIPLY and DIVIDE
 %right FACTORIAL
 
 %define parse.error verbose

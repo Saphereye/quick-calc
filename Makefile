@@ -18,7 +18,7 @@ $(BISON_OUTPUT_C) $(BISON_OUTPUT_H): $(BISON_FILE)
 	@bison -vdy -o $(BISON_OUTPUT_C) $<
 # Compile the program
 $(OUTPUT): $(BISON_OUTPUT_C) $(FLEX_OUTPUT) $(MAIN_CPP)
-	@g++ $^ -o $@ -lm
+	@g++ $^ -o $@ -lm -std=c++17
 # Run the program with an input file
 run: $(OUTPUT)
 	@./$< $(filter-out $@,$(MAKECMDGOALS))
