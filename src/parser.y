@@ -23,6 +23,7 @@
     extern char* yytext;
 
     std::vector<double> previous_results;
+    double kahan_babushka_neumaier_sum(std::vector<double> input_vector);
     std::map<std::string, std::function<double(std::vector<double>)>> functions = {
         {"sin", [](std::vector<double> args) { return sin(args[0]); }},
         {"cos", [](std::vector<double> args) { return cos(args[0]); }},
@@ -50,8 +51,8 @@
         {"abs", [](std::vector<double> args) { return fabs(args[0]); }},
         {"max", [](std::vector<double> args) { return *std::max_element(args.begin(), args.end()); }},
         {"min", [](std::vector<double> args) { return *std::min_element(args.begin(), args.end()); }},
-        {"sum", [](std::vector<double> args) { double sum = 0; for (double arg : args) sum += arg; return sum; }},
-        {"avg", [](std::vector<double> args) { double sum = 0; for (double arg : args) sum += arg; return sum / args.size(); }},
+        {"sum", [](std::vector<double> args) { return kahan_babushka_neumaier_sum(args); }},
+        {"avg", [](std::vector<double> args) { double sum = kahan_babushka_neumaier_sum(args); return sum / args.size(); }},
         {"median", [](std::vector<double> args) { std::sort(args.begin(), args.end()); return args[args.size() / 2]; }},
         {"range", [](std::vector<double> args) { std::sort(args.begin(), args.end()); return args[args.size() - 1] - args[0]; }},
         {"stdev", [](std::vector<double> args) { double sum = 0, sum_sq = 0; for (double arg : args) { sum += arg; sum_sq += arg * arg; } return sqrt(sum_sq / args.size() - (sum / args.size()) * (sum / args.size())); }},
@@ -64,6 +65,25 @@
         {"comb", [](std::vector<double> args) { return args.size() == 2 ? tgamma(args[0] + 1) / (tgamma(args[1] + 1) * tgamma(args[0] - args[1] + 1)) : 0; }},
         {"rand", [](std::vector<double> args) { return args.empty() ? static_cast<double>(rand()) / RAND_MAX : args.size() == 2 ? args[0] + (args[1] - args[0]) * static_cast<double>(rand()) / RAND_MAX : static_cast<double>(rand()) / RAND_MAX; }},
     };
+
+    double kahan_babushka_neumaier_sum(std::vector<double> input_vector) {
+        double sum = 0.0;
+        double c = 0.0; // Correction term
+
+        for(double number : input_vector) {
+            double t = sum + number;
+
+            if (fabs(sum) >= fabs(number)) {
+                c += (sum - t) + number;
+            } else {
+                c += (number - t) + sum;
+            }
+
+            sum = t;
+        }
+
+        return sum + c;
+    }
 %}
 
 %locations
